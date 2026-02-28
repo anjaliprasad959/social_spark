@@ -1,0 +1,270 @@
+/* ============================= */
+/* ROOT VARIABLES */
+/* ============================= */
+
+:root {
+    --bg-gradient: linear-gradient(135deg, #667eea, #764ba2);
+    --surface: rgba(255, 255, 255, 0.1);
+    --surface-strong: rgba(255, 255, 255, 0.15);
+    --primary: #ffd166;
+    --accent: #06d6a0;
+    --danger: #ef476f;
+    --text-main: #ffffff;                                                                            
+    --text-soft: rgba(255, 255, 255, 0.8);
+}
+
+/* ============================= */
+/* GLOBAL */
+/* ============================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============================= */
+/* PAGES */
+/* ============================= */
+
+.page {
+    padding: 40px 20px;
+    animation: fadeIn 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 320px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.page-content {
+    max-width: 900px;
+    margin: auto;
+}
+
+/* ============================= */
+/* CARDS */
+/* ============================= */
+
+.welcome-card,
+.auth-card,
+.stat-card,
+.question-block,
+.reflection-form {
+    background: var(--surface);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 35px; /* increased padding */
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* ============================= */
+/* BUTTONS */
+/* ============================= */
+
+.btn {
+    padding: 14px 26px; /* slightly bigger buttons */
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1.1rem; /* bigger text */
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #222;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.btn-secondary {
+    background: var(--surface-strong);
+    color: white;
+}
+
+.btn-option {
+    width: 80%;
+    margin: 15px auto; /* center aligned with spacing */
+    background: var(--surface-strong);
+    color: white;
+    font-size: 1.2rem; /* larger font for options */
+    font-weight: 600;
+    padding: 14px 20px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.btn-option:hover {
+    background: var(--accent);
+    color: black;
+}
+
+/* ============================= */
+/* DASHBOARD */
+/* ============================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: var(--text-soft);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* ============================= */
+/* XP BAR */
+/* ============================= */
+
+.progress-bar {
+    height: 14px; /* slightly taller */
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd166, #06d6a0);
+    transition: width 0.5s ease;
+}
+
+/* ============================= */
+/* STREAK FIRE GLOW */
+/* ============================= */
+
+#dashboard-streak {
+    animation: fireGlow 1.5s infinite alternate;
+}
+
+@keyframes fireGlow {
+    from { text-shadow: 0 0 5px orange; }
+    to { text-shadow: 0 0 20px red; }
+}
+
+/* ============================= */
+/* FORM ELEMENTS */
+/* ============================= */
+
+input, textarea {
+    width: 90%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.radio-option {
+    display: block;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+textarea {
+    resize: none;
+}
+
+/* ============================= */
+/* TITLES */
+/* ============================= */
+
+h1 {
+    font-size: 3rem; /* bigger title */
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    margin-bottom: 25px;
+    color: var(--text-soft);
+    font-size: 1.3rem;
+}
+
+/* ============================= */
+/* TASK TEXT */
+/* ============================= */
+
+.scenario-text {
+    font-size: 1.3rem; /* bigger and readable */
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+/* ============================= */
+/* MCQ PAGE SPECIFIC IMPROVEMENTS */
+/* ============================= */
+
+.question-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.question-block .question-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.question-block .options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* equal spacing between options */
+}
+
+.btn-submit {
+    margin-top: 30px;
+    align-self: center;
+    font-size: 1.2rem;
+    padding: 14px 28px;
+}

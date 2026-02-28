@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocialSpark - Communication Training</title>
+<link rel="stylesheet" href="gemini.css">
+
+<style>
+.page { display:none; }
+.page.active { display:block; }
+
+.container { font-family: Arial, sans-serif; padding:20px; }
+
+.btn {
+    padding:10px 18px;
+    border:none;
+    cursor:pointer;
+    border-radius:6px;
+    margin:5px 0;
+}
+.btn-primary { background:#5B7FBE; color:white; }
+.btn-secondary { background:#ccc; }
+
+.stat-card { margin:10px 0; }
+.progress-bar { height:10px; background:#ddd; border-radius:5px; }
+.progress-fill { height:100%; background:#5B7FBE; width:0%; border-radius:5px; }
+
+textarea { width:100%; }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- ================= WELCOME ================= -->
+<div id="welcome-page" class="page active">
+<h1>SocialSpark</h1>
+<p>Master real-world communication skills.</p>
+<button class="btn btn-primary" onclick="showPage('register-page')">Register</button>
+<button class="btn btn-secondary" onclick="showPage('login-page')">Login</button>
+</div>
+
+<!-- ================= LOGIN ================= -->
+<div id="login-page" class="page">
+<h2>Login</h2>
+<input type="email" id="login-email" placeholder="Email"><br>
+<input type="password" id="login-password" placeholder="Password"><br>
+<button class="btn btn-primary" onclick="handleLogin()">Login</button>
+<p id="login-error"></p>
+<button onclick="showPage('welcome-page')">Back</button>
+</div>
+
+<!-- ================= REGISTER ================= -->
+<div id="register-page" class="page">
+<h2>Register</h2>
+<input type="text" id="register-username" placeholder="Username"><br>
+<input type="email" id="register-email" placeholder="Email"><br>
+<input type="password" id="register-password" placeholder="Password"><br>
+<input type="password" id="register-confirm" placeholder="Confirm Password"><br>
+<button class="btn btn-primary" onclick="handleRegister()">Create Account</button>
+<p id="register-error"></p>
+<button onclick="showPage('welcome-page')">Back</button>
+</div>
+
+<!-- ================= ASSESSMENT ================= -->
+<div id="assessment-page" class="page">
+<h2>Skill Assessment</h2>
+
+<p>1. When meeting someone new?</p>
+<label><input type="radio" name="q1" value="1"> Avoid</label>
+<label><input type="radio" name="q1" value="5"> Confident</label>
+
+<p>2. Handle disagreement?</p>
+<label><input type="radio" name="q2" value="1"> Back down</label>
+<label><input type="radio" name="q2" value="5"> Facilitate</label>
+
+<p>3. Presenting ideas?</p>
+<label><input type="radio" name="q3" value="1"> Very anxious</label>
+<label><input type="radio" name="q3" value="5"> Inspire</label>
+
+<button class="btn btn-primary" onclick="submitAssessment()">Submit</button>
+</div>
+
+<!-- ================= FOCUS ================= -->
+<div id="focus-page" class="page">
+<h2>Select Focus</h2>
+<button class="btn" onclick="selectFocus('Public Speaking')">Public Speaking</button>
+<button class="btn" onclick="selectFocus('Casual Conversations')">Casual Conversations</button>
+<button class="btn" onclick="selectFocus('Professional Communication')">Professional Communication</button>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard-page" class="page">
+<h2>Dashboard</h2>
+
+<div class="stat-card">Level: <span id="dashboard-level"></span></div>
+<div class="stat-card">Total XP: <span id="dashboard-totalxp"></span></div>
+<div class="stat-card">Current XP: <span id="xp-current"></span></div>
+<div class="progress-bar"><div id="xp-bar-fill" class="progress-fill"></div></div>
+<div class="stat-card">Streak: <span id="dashboard-streak"></span></div>
+<div class="stat-card">Focus: <span id="dashboard-focus"></span></div>
+
+<button class="btn btn-primary" onclick="loadTask()">Start Task</button>
+<button class="btn btn-secondary" onclick="logout()">Logout</button>
+</div>
+
+<!-- ================= TASK ================= -->
+<div id="task-page" class="page">
+<h2 id="task-title"></h2>
+<p id="task-desc"></p>
+<button class="btn btn-primary" onclick="completeTask()">I Completed</button>
+</div>
+
+<!-- ================= REFLECTION ================= -->
+<div id="reflection-page" class="page">
+<h2>Reflection</h2>
+<label>Confidence (1-5)</label>
+<input type="number" id="confidence" min="1" max="5"><br><br>
+<textarea id="learning-text" placeholder="What did you learn?"></textarea><br>
+<button class="btn btn-primary" onclick="saveReflection()">Submit</button>
+</div>
+
+</div>
+
+<script>
+
+// ================= PAGE CONTROL =================
+function showPage(id){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// ================= REGISTER =================
+function handleRegister(){
+    let username = document.getElementById('register-username').value.trim();
+    let email = document.getElementById('register-email').value.trim();
+    let pass = document.getElementById('register-password').value;
+    let confirm = document.getElementById('register-confirm').value;
+
+    if(pass !== confirm){ 
+        document.getElementById('register-error').innerText="Passwords do not match";
+        return;
+    }
+
+    let users = JSON.parse(localStorage.getItem('users')||'[]');
+    if(users.find(u=>u.email===email)){
+        document.getElementById('register-error').innerText="Email exists";
+        return;
+    }
+
+    let user = {id:Date.now(), username,email,password:pass};
+    users.push(user);
+    localStorage.setItem('users',JSON.stringify(users));
+
+    alert("Registered! Please login.");
+    showPage('login-page');
+}
+
+// ================= LOGIN =================
+function handleLogin(){
+    let email = document.getElementById('login-email').value;
+    let pass = document.getElementById('login-password').value;
+
+    let users = JSON.parse(localStorage.getItem('users')||'[]');
+    let user = users.find(u=>u.email===email && u.password===pass);
+
+    if(!user){
+        document.getElementById('login-error').innerText="Invalid credentials";
+        return;
+    }
+
+    localStorage.setItem('currentUser',JSON.stringify(user));
+
+    let data = localStorage.getItem('userData_'+user.id);
+    if(!data){
+        showPage('assessment-page');
+    } else {
+        loadDashboard();
+        showPage('dashboard-page');
+    }
+}
+
+// ================= ASSESSMENT =================
+function submitAssessment(){
+    let total=0;
+    ['q1','q2','q3'].forEach(q=>{
+        let selected=document.querySelector(`input[name="${q}"]:checked`);
+        if(selected) total+=parseInt(selected.value);
+    });
+
+    let level=Math.ceil(total/5);
+
+    let user=JSON.parse(localStorage.getItem('currentUser'));
+
+    let data={
+        level,
+        totalXP:0,
+        currentXP:0,
+        streak:0,
+        focus:null
+    };
+
+    localStorage.setItem('userData_'+user.id,JSON.stringify(data));
+    showPage('focus-page');
+}
+
+// ================= FOCUS =================
+function selectFocus(f){
+    let user=JSON.parse(localStorage.getItem('currentUser'));
+    let data=JSON.parse(localStorage.getItem('userData_'+user.id));
+    data.focus=f;
+    localStorage.setItem('userData_'+user.id,JSON.stringify(data));
+    loadDashboard();
+    showPage('dashboard-page');
+}
+
+// ================= DASHBOARD =================
+function loadDashboard(){
+    let user=JSON.parse(localStorage.getItem('currentUser'));
+    let data=JSON.parse(localStorage.getItem('userData_'+user.id));
+
+    document.getElementById('dashboard-level').innerText=data.level;
+    document.getElementById('dashboard-totalxp').innerText=data.totalXP;
+    document.getElementById('xp-current').innerText=data.currentXP+" / 100";
+    document.getElementById('dashboard-streak').innerText=data.streak+" 🔥";
+    document.getElementById('dashboard-focus').innerText=data.focus;
+
+    document.getElementById('xp-bar-fill').style.width=(data.currentXP)+"%";
+}
+
+// ================= TASK =================
+function loadTask(){
+    document.getElementById('task-title').innerText="Today's Challenge";
+    document.getElementById('task-desc').innerText="Start a conversation with someone new today.";
+    showPage('task-page');
+}
+
+function completeTask(){
+    showPage('reflection-page');
+}
+
+// ================= REFLECTION =================
+function saveReflection(){
+    let user=JSON.parse(localStorage.getItem('currentUser'));
+    let data=JSON.parse(localStorage.getItem('userData_'+user.id));
+
+    data.currentXP+=20;
+    data.totalXP+=20;
+    data.streak+=1;
+
+    if(data.currentXP>=100){
+        data.level+=1;
+        data.currentXP=0;
+    }
+
+    localStorage.setItem('userData_'+user.id,JSON.stringify(data));
+    loadDashboard();
+    showPage('dashboard-page');
+}
+
+// ================= LOGOUT =================
+function logout(){
+    localStorage.removeItem('currentUser');
+    showPage('welcome-page');
+}
+
+// ================= AUTO LOGIN =================
+window.onload=function(){
+    let user=localStorage.getItem('currentUser');
+    if(user){
+        loadDashboard();
+        showPage('dashboard-page');
+    }
+};
+
+</script>
+</body>
+</html>
